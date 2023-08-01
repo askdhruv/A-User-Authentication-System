@@ -13,9 +13,10 @@ const encrypt = require('mongoose-encryption');
 app.use(express.static(__dirname));
 app.use(express.json());
 app.set('view engine', 'html');
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-mongoose.connect("mongodb://127.0.0.1/userDB");
+mongoose.connect("mongodb+srv://dhruv2002agg:6M4im3KMYBG0B6f5@cluster0.knadbz4.mongodb.net/task4DB");
+
 const userSchema = new mongoose.Schema({
   email: String,
   password: String
@@ -31,6 +32,8 @@ app.get('/', (req, res) => {
 app.post("/", function(req, res){
   const username = req.body.username;
   const password = md5(req.body.password);
+  console.log(username);
+  console.log(password);
 
   User.findOne({email: username})
       .then(founduser => {
@@ -38,7 +41,7 @@ app.post("/", function(req, res){
               res.redirect("/success");
           }
           else{
-              console.log("Password incorrect");
+              console.log("Passsword incorrect");
           }
       })
       .catch(err => {
