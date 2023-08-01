@@ -4,14 +4,47 @@ const ethers = require('ethers');
 const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
-app.use(express.static(__dirname));
 const jwt = require('jsonwebtoken');
-app.use(express.json())
+var md5 = require('md5');
+const mongoose = require("mongoose");
+const encrypt = require('mongoose-encryption');
+
+
+app.use(express.static(__dirname));
+app.use(express.json());
+app.set('view engine', 'html');
 app.use(bodyParser.json());
+
+mongoose.connect("mongodb://127.0.0.1/userDB");
+const userSchema = new mongoose.Schema({
+  email: String,
+  password: String
+});
+
+const User = new mongoose.model("User", userSchema);
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+
+app.post("/", function(req, res){
+  const username = req.body.username;
+  const password = md5(req.body.password);
+
+  User.findOne({email: username})
+      .then(founduser => {
+          if(founduser && (founduser.password === password)){
+              res.redirect("/success");
+          }
+          else{
+              console.log("Password incorrect");
+          }
+      })
+      .catch(err => {
+          console.log(err);
+      });    
+});
 
 
 // GET route to retrieve a nonce value for use in signing
