@@ -43,5 +43,4 @@ This web application provides a flexible authentication system, allowing users t
 ### To Do
 - Add more features to the user dashboard.
 - Improve the security of the application.
-- Add more documentation.
 
