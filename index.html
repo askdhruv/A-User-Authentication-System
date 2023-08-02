@@ -6,43 +6,49 @@
     <script src="metaMaskLogin.js" type="application/javascript"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <h1>Sign in for User Management Dashboard</h1>
-      <h1>Register</h1>
-      <div class="row">
-        <div class="col-sm-8">
-          <div class="card">
-            <div class="card-body">
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem;">
+              <div class="card-body p-5 text-center">
     
-              <!-- Makes POST request to / route -->
+                <h3 class="mb-5">Sign in</h3>
               <form action="/" method="POST">
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" name="username" placeholder="test1@hash.com">
+                <div class="form-outline mb-4">
+                  <input type="email" id="typeEmailX-2" class="form-control form-control-lg" name="username"/>
+                  <label class="form-label" for="typeEmailX-2">Email</label>
                 </div>
-                <div class="form-group">
-                  <label for="password">Password</label>
-                  <input type="password" class="form-control" name="password" placeholder="qwerty">
+    
+                <div class="form-outline mb-4">
+                  <input type="password" id="typePasswordX-2" class="form-control form-control-lg" name="password"/>
+                  <label class="form-label" for="typePasswordX-2">Password</label>
                 </div>
-                <button type="submit" class="btn btn-dark">Login</button>
+    
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
               </form>
+              <div>
+                <p class="mb-0">Don't have an account? <a href="/register" class="text-blue-50 fw-bold">Sign Up</a>
+                </p>
+              </div>
+                <hr class="my-4">
     
+                <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;"
+                  onclick="window.location.href='/auth/google'" role="button">
+                  <i class="fab fa-google me-2"></i> Sign in with Google
+                </button>
+
+                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #ffa500;"
+                   onclick="signMessage()"><i class="fab fa-meta me-2"></i> Sign in with Metamask</button>
+    
+              </div>
             </div>
           </div>
         </div>
-    
-        <div class="col-sm-4">
-          <div class="card social-block">
-            <div class="card-body">
-              <button class="btn btn-block btn-social btn-google" onclick="signMessage()">Login using Metamask</button>
-            </div>
-          </div>
-        </div>
-    
       </div>
-    </div>
+    </section>
    </body>
 </html>

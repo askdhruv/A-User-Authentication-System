@@ -28,6 +28,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname + '/register.html'));
+});
+
+app.get('/success', (req, res) => {
+  res.sendFile(path.join(__dirname + '/success.html'));
+});
+
 
 app.post("/", function(req, res){
   const username = req.body.username;
@@ -48,6 +56,23 @@ app.post("/", function(req, res){
           console.log(err);
       });    
 });
+
+app.post("/register", async function(req, res) {
+  const username = req.body.username;
+  const password = md5(req.body.password);
+  try {
+    const newUser = new User({
+      email: username,
+      password: password
+    });
+
+    await newUser.save();
+    res.redirect("/success");
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 
 // GET route to retrieve a nonce value for use in signing
@@ -99,9 +124,6 @@ app.post('/verify', (req, res) => {
   });
   
 
-app.get('/success', (req, res) => {
-    res.sendFile(path.join(__dirname + '/success.html'));
-});
 
 
 app.listen(3000, () => {
