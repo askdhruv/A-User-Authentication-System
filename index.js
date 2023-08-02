@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
 const ethers = require('ethers');
@@ -7,7 +8,13 @@ const bodyParser = require("body-parser");
 const jwt = require('jsonwebtoken');
 var md5 = require('md5');
 const mongoose = require("mongoose");
+const session = require('express-session');
 const encrypt = require('mongoose-encryption');
+const passport = require('passport');
+const passportLocalMongoose = require('passport-local-mongoose');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
+
 
 
 app.use(express.static(__dirname));
@@ -15,14 +22,60 @@ app.use(express.json());
 app.set('view engine', 'html');
 app.use(bodyParser.urlencoded({extended: true}));
 
-mongoose.connect("mongodb+srv://dhruv2002agg:6M4im3KMYBG0B6f5@cluster0.knadbz4.mongodb.net/task4DB");
+app.use(session({
+  secret: 'i love cars.',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+mongoose.connect(process.env.MONGODB_URL);
 
 const userSchema = new mongoose.Schema({
   email: String,
   password: String
 });
 
+userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
+
+
 const User = new mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(function(user, cb) {
+    process.nextTick(function() {
+      return cb(null, {
+        id: user.id,
+        username: user.username,
+        picture: user.picture
+      });
+    });
+  });
+  
+  passport.deserializeUser(function(user, cb) {
+    process.nextTick(function() {
+      return cb(null, user);
+    });
+  });
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/success"
+    //add line 23:25
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    console.log(profile);
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
@@ -35,6 +88,17 @@ app.get('/register', (req, res) => {
 app.get('/success', (req, res) => {
   res.sendFile(path.join(__dirname + '/success.html'));
 });
+
+app.get("/auth/google",
+  passport.authenticate('google', { scope: ["profile"] })
+);
+
+app.get('/auth/google/success', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/success');
+  });
 
 
 app.post("/", function(req, res){
@@ -81,7 +145,7 @@ app.get('/api/nonce', (req, res) => {
   res.json({ nonce });
 });
 
-const secretKey = 'ilovecars';
+const secretKey = process.env.SECRET_KEY;
 
 app.post('/login', (req, res) => {
     const { signedMessage, message, address } = req.body;
