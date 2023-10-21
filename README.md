@@ -1,4 +1,4 @@
-# task4-luganodes
+# Authentication System
 User management dashboard with multi-authentication with Email/Password and Web3 authentication
 
 
